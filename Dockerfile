@@ -5,7 +5,8 @@ WORKDIR /app
 COPY python_script/pyspark_consumer.py python_script/streaming_simulation.py run_program.sh /app/
 
 RUN pip install pyspark \
-    psycopg2-binary
+    psycopg2-binary\
+    kafka-python
 
 RUN chmod +x run_program.sh
 

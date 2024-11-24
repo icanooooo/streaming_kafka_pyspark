@@ -1,13 +1,13 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StringType, IntegerType, TimestampType, StructField
+from pyspark.sql.types import StructType, StringType, StructField, IntegerType, TimestampType, StructField
 from pyspark.sql.functions import from_json, col
 import psycopg2
 
 schema = StructType([
     StructField("id", IntegerType(), True),
-    StructType("name", StringType(), True),
-    StructType("age", IntegerType(), True),
-    StructType("timestamp", TimestampType(), True)
+    StructField("name", StringType(), True),
+    StructField("age", IntegerType(), True),
+    StructField("timestamp", TimestampType(), True)
 ])
 
 spark = SparkSession.builder.appName("Testing Postgres").getOrCreate()

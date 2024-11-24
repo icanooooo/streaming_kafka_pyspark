@@ -2,7 +2,7 @@ services:
   destination_postgres:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "5433:5433"
     networks:
       - confluent
     environment:
@@ -145,9 +145,12 @@ services:
     depends_on:
       control-center:
         condition: service_healthy
+    volumes:
+      - ./python_script:/app/python_script
 
 networks:
   confluent:
 
 volumes:
   destination_db_data:
+  python_script:
