@@ -12,7 +12,7 @@ def send_messages():
         "id": 28,
         "name": "ican",
         "age": 24,
-        "timestamp": time.time()
+        "submitted_time": time.time()
     }
 
     producer.send("test_data", value=data)

@@ -19,7 +19,42 @@ df = spark.readStream.format("kafka")\
 
 parsed = df.select(from_json(col("value").cast("string"), schema).alias("data"))
 
+def ensure_table_exist():
+    db_config = {
+        "dbname": "destination_db",
+        "user": "icanooo",
+        "password": "rahasia",
+        "host": "localhost",
+        "port": 5432
+    }
+
+    query = """
+    CREATE TABLE IF NOT EXIST test_table (
+        id SERIAL PRIMARY KEY,
+        name STRING,
+        age INT,
+        submitted_time TIMESTAMPE  
+    );"""
+
+    try:
+        connection = psycopg2.connect(db_config)
+        cursor = connection.cursor()
+
+        cursor.execute(query)
+
+        connection.commit()
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
 def write_to_postgres(batch_df, batch_id):
+    ensure_table_exist()
+    
     batch_df.write\
         .format("jdbc")\
         .option("url", "jdbc:postgresql://postgres:5432/destination_db")\
@@ -29,3 +64,5 @@ def write_to_postgres(batch_df, batch_id):
         .mode("append")\
         .save()
 
+
+parsed.writeStream.foreachBatch(write_to_postgres).start().awaitTermination()

@@ -1,16 +1,16 @@
 services:
   destination_postgres:
     image: postgres:latest
-  ports:
-    - "5432:5432"
-  networks:
-    - db_network
-  environment:
-    POSTGRES_DB: destination_db
-    POSTGRES_USER: icanooo
-    POSTGRES_PASSWORD: rahasia
-  volumes:
-    - destination_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - confluent
+    environment:
+      POSTGRES_DB: destination_db
+      POSTGRES_USER: icanooo
+      POSTGRES_PASSWORD: rahasia
+    volumes:
+      - destination_db_data:/var/lib/postgresql/data
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -116,7 +116,7 @@ services:
       retries: 5
   
   spark-master:
-    image: bitname/spark:latest
+    image: bitnami/spark:latest
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "9090:8080"
@@ -124,8 +124,8 @@ services:
     networks:
       - confluent
   
-  spark-wortker:
-    image: bitname/spark:latest
+  spark-worker:
+    image: bitnami/spark:latest
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
@@ -137,6 +137,17 @@ services:
     networks:
       - confluent
 
+  python_program:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: root
+    depends_on:
+      control-center:
+        condition: service_healthy
+
 networks:
   confluent:
-  db_network:
+
+volumes:
+  destination_db_data:
