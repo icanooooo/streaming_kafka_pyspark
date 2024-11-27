@@ -3,8 +3,6 @@ services:
     image: postgres:latest
     ports:
       - "5433:5433"
-    networks:
-      - confluent
     environment:
       POSTGRES_DB: destination_db
       POSTGRES_USER: icanooo
@@ -26,8 +24,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - confluent
 
   broker:
     image: confluentinc/cp-kafka:7.4.0
@@ -41,7 +37,7 @@ services:
       - "9091:9091"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'localhost:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://BROKER:29092, PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -62,8 +58,6 @@ services:
     ports:
       - "9090:8080"
       - "7077:7077"
-    networks:
-      - confluent
   
   spark-worker:
     image: bitnami/spark:latest
@@ -75,22 +69,17 @@ services:
       SPARK_WORKER_CORES: 2
       SPARK_WORKER_MEMORY: 1g
       SPARK_MASTER_URL: spark://spark-master:7077
-    networks:
-      - confluent
 
-  python_program:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    user: root
-    depends_on:
-      control-center:
-        condition: service_healthy
-    volumes:
-      - ./python_script:/app/python_script
-
-networks:
-  confluent:
+  # python_program:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   user: root
+  #   depends_on:
+  #     control-center:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./python_script:/app/python_script
 
 volumes:
   destination_db_data:
