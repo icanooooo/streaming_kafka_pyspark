@@ -6,7 +6,7 @@ conf = {
     'bootstrap.servers':'localhost:9092'
 }
 
-# Pelajari lagi configuration consumer detail seperti
+# Pelajari lagi configuration consumer detail seperti apa
 consumer = Consumer(conf | {
     'group.id':'test-group', 
     'auto.offset.reset':'earliest',
@@ -14,8 +14,6 @@ consumer = Consumer(conf | {
 })
 
 if __name__ == "__main__":
-    print("Test")
-
     consumer.subscribe(['test_event'])
 
     try:

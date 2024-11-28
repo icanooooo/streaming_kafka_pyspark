@@ -1,8 +1,8 @@
-from confluent_kafka import SerializingProducer
+from confluent_kafka import Producer #find out kenapa pakai serializing producer bukan producer aja
 import json
 import time
 
-producer = SerializingProducer({"bootstrap.servers":"localhost:9092"})
+producer = Producer({"bootstrap.servers":"localhost:9092"})
 
 def delivery_report(err, msg):
     if err is not None:
