@@ -6,10 +6,11 @@ conf = {
     'bootstrap.servers':'localhost:9092'
 }
 
+# Pelajari lagi configuration consumer detail seperti
 consumer = Consumer(conf | {
-    'group.id':'test-group',
+    'group.id':'test-group', 
     'auto.offset.reset':'earliest',
-    'enable.auto.commit': False
+    'enable.auto.commit': False 
 })
 
 if __name__ == "__main__":
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            msg = consumer.poll(timeout=1.0)
+            msg = consumer.poll(timeout=1.0) # timeout waktu delay jika message yang didapatkan none
             if msg is None:
                 continue
             elif msg.error():
