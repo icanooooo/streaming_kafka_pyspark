@@ -1,68 +1,35 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StringType, StructField, IntegerType, TimestampType, StructField
-from pyspark.sql.functions import from_json, col
-import psycopg2
+import simplejson as json
 
-schema = StructType([
-    StructField("id", IntegerType(), True),
-    StructField("name", StringType(), True),
-    StructField("age", IntegerType(), True),
-    StructField("timestamp", TimestampType(), True)
-])
+from confluent_kafka import Consumer, KafkaError, KafkaException
 
-spark = SparkSession.builder.appName("Testing Postgres").getOrCreate()
+conf = {
+    'bootstrap.servers':'localhost:9092'
+}
 
-df = spark.readStream.format("kafka")\
-    .option("kafka.bootstrap.servers", "kafka:9092")\
-    .option("subscribe", "test_data")\
-    .load()
+consumer = Consumer(conf | {
+    'group.id':'test-group',
+    'auto.offset.reset':'earliest',
+    'enable.auto.commit': False
+})
 
-parsed = df.select(from_json(col("value").cast("string"), schema).alias("data"))
+if __name__ == "__main__":
+    print("Test")
 
-def ensure_table_exist():
-    db_config = {
-        "dbname": "destination_db",
-        "user": "icanooo",
-        "password": "rahasia",
-        "host": "localhost",
-        "port": 5432
-    }
-
-    query = """
-    CREATE TABLE IF NOT EXIST test_table (
-        id SERIAL PRIMARY KEY,
-        name STRING,
-        age INT,
-        submitted_time TIMESTAMPE  
-    );"""
+    consumer.subscribe(['test_event'])
 
     try:
-        connection = psycopg2.connect(db_config)
-        cursor = connection.cursor()
-
-        cursor.execute(query)
-
-        connection.commit()
-    except Exception as e:
-        print(f"Error: {e}")
-
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
-
-def write_to_postgres(batch_df, batch_id):
-    ensure_table_exist()
-    
-    batch_df.write\
-        .format("jdbc")\
-        .option("url", "jdbc:postgresql://postgres:5432/destination_db")\
-        .option("test_table", "test_data")\
-        .option("user", "icanooo")\
-        .option("password", "rahasia")\
-        .mode("append")\
-        .save()
-
-
-parsed.writeStream.foreachBatch(write_to_postgres).start().awaitTermination()
+        while True:
+            msg = consumer.poll(timeout=1.0)
+            if msg is None:
+                continue
+            elif msg.error():
+                if msg.error().code() == KafkaError.__PARTITION_EOF:
+                    continue
+                else:
+                    print(msg.error())
+                    break
+            else:
+                received = json.loads(msg.value().decode('utf-8'))
+                print(received)
+    except KafkaException as e:
+        print(e)
