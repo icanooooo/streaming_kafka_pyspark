@@ -3,7 +3,7 @@ import simplejson as json
 from confluent_kafka import Consumer, KafkaError, KafkaException
 
 conf = {
-    'bootstrap.servers':'localhost:9092'
+    'bootstrap.servers':'localhost:9092, localhost:9093, localhost:9094'
 }
 
 # Pelajari lagi configuration consumer detail seperti apa

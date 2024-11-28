@@ -2,7 +2,7 @@ from confluent_kafka import Producer #find out kenapa pakai serializing producer
 import json
 import time
 
-producer = Producer({"bootstrap.servers":"localhost:9092"})
+producer = Producer({"bootstrap.servers":"localhost:9092, localhost:9093, localhost:9094"})
 
 def delivery_report(err, msg):
     if err is not None:
