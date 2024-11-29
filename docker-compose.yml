@@ -115,6 +115,8 @@ services:
     ports:
       - "9090:8080"
       - "7077:7077"
+    volumes:
+      - ./python_script/pyspark_consumer.py:/python_script/pyspark_consumer.py
 
   
   spark-worker:
@@ -127,13 +129,15 @@ services:
       SPARK_WORKER_CORES: 2
       SPARK_WORKER_MEMORY: 1g
       SPARK_MASTER_URL: spark://spark-master:7077
+    volumes:
+      - python_script:/python_script
 
 
-  deps:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    user: root
+  # deps:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   user: root
 
 volumes:
   destination_db_data:
