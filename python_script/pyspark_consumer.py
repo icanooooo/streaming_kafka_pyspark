@@ -1,34 +1,45 @@
-import simplejson as json
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StringType, StructType, StructField, TimestampType
+from pyspark.sql.functions import from_json, col
 
-from confluent_kafka import Consumer, KafkaError, KafkaException
+# Create SparkSession
+spark = SparkSession.builder \
+    .appName("Test-PySpark") \
+    .master("local[*]") \
+    .config("spark.jars.packages",
+            "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0") \
+    .config("spark.jars.repositories", "https://repo1.maven.org/maven2") \
+    .config("spark.sql.adaptive.enabled", "false") \
+    .config("spark.sql.streaming.forceDeleteTempCheckpointLocation", "true") \
+    .getOrCreate()
 
-conf = {
-    'bootstrap.servers':'localhost:9092' #, localhost:9093, localhost:9094"
-}
+# kafka configuration
+kafka_broker = "localhost:9092"
+kafka_topic = "test_event"
 
-# Pelajari lagi configuration consumer detail seperti apa
-consumer = Consumer(conf | {
-    'group.id':'test-group', 
-    'auto.offset.reset':'earliest',
-    'enable.auto.commit': False 
-})
+# read stream
+raw_stream = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", kafka_broker) \
+    .option("subscribe", kafka_topic) \
+    .load()
 
-if __name__ == "__main__":
-    consumer.subscribe(['test_event'])
+# Defining Schema
+schema = StructType([
+    StructField("id", StringType(), True),
+    StructField("name", StringType(), True),
+    StructField("age", StringType(), True),
+    StructField("submitted_time", TimestampType(), True)
+])
 
-    try:
-        while True:
-            msg = consumer.poll(timeout=1.0) # timeout waktu delay jika message yang didapatkan none
-            if msg is None:
-                continue
-            elif msg.error():
-                if msg.error().code() == KafkaError.__PARTITION_EOF:
-                    continue
-                else:
-                    print(msg.error())
-                    break
-            else:
-                received = json.loads(msg.value().decode('utf-8'))
-                print(received)
-    except KafkaException as e:
-        print(e)
+parsed_stream = raw_stream.selectExpr("CAST(value AS STRING)") \
+    .select(from_json(col("value"), schema).alias("data")) \
+    .select("data.*")
+
+# Display data
+query = parsed_stream.writeStream \
+    .outputMode("append") \
+    .format("console") \
+    .start()
+
+query.awaitTermination

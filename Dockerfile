@@ -7,7 +7,3 @@ COPY python_script/pyspark_consumer.py python_script/streaming_simulation.py run
 RUN pip install pyspark \
     psycopg2-binary\
     kafka-python
-
-RUN chmod +x run_program.sh
-
-CMD ["./run_program.sh"]

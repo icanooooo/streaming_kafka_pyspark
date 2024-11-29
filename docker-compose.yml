@@ -129,16 +129,11 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077
 
 
-  # python_program:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   user: root
-  #   depends_on:
-  #     control-center:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./python_script:/app/python_script
+  deps:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: root
 
 volumes:
   destination_db_data:
