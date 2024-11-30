@@ -2,6 +2,10 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType, StructType, StructField, TimestampType
 from pyspark.sql.functions import from_json, col
 
+def ensureTable(conn):
+    print("yes")
+
+
 if __name__ == "__main__":
     # Create SparkSession
     spark = SparkSession.builder \
@@ -38,7 +42,7 @@ if __name__ == "__main__":
     query = parsed_stream.writeStream \
         .outputMode("append") \
         .format("console") \
-        .option("checkpointLocation", "checkpoint") \
+        .option("checkpointLocation", "/home/icanooo/Desktop/DE/streaming_project/checkpoint") \
         .start()
 
     query.awaitTermination()

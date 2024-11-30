@@ -1,6 +1,7 @@
 from confluent_kafka import Producer #find out kenapa pakai serializing producer bukan producer aja
 import json
 import time
+from datetime import datetime
 
 producer = Producer({"bootstrap.servers":"localhost:9092"}) #, localhost:9093, localhost:9094"})
 
