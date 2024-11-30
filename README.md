@@ -11,7 +11,7 @@ So Apache Kafka is a distribute event and stream processing tool. There is a pro
 Within Kafka there are brokers, nodes that are responsible for doing the work. Kafka is a distributed system, therefore we can easily add brokers to adjust neccessity of the data stream. They are also fault tolerance, with brokers backing up each other, ensuring if any of the broker are shut down another one could take the load. A group of multiple brokers are called clusters.
 
 updates:
-- Succesfully consume within a python script!
+- Succesfully consume with PySpark, reading the Data Stream!
 
 The full documentation will be written here when the project is done.
 
