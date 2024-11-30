@@ -9,7 +9,6 @@ if __name__ == "__main__":
         .master("local[*]") \
         .config("spark.jars.packages",
                 "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0") \
-        .config("spark.jars.repositories", "https://repo1.maven.org/maven2") \
         .getOrCreate()
 
     # kafka configuration
@@ -39,6 +38,7 @@ if __name__ == "__main__":
     query = parsed_stream.writeStream \
         .outputMode("append") \
         .format("console") \
+        .option("checkpointLocation", "checkpoint") \
         .start()
 
-    query.awaitTermination
+    query.awaitTermination()
