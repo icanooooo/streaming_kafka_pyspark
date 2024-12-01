@@ -2,7 +2,7 @@ services:
   destination_postgres:
     image: postgres:latest
     ports:
-      - "5433:5433"
+      - "5432:5432"
     environment:
       POSTGRES_DB: destination_db
       POSTGRES_USER: icanooo
