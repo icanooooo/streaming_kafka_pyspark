@@ -28,6 +28,7 @@ def to_postgres(batch_df, batch_id):
             .option("dbtable", "test_table") \
             .option("user", "icanooo") \
             .option("password", "rahasia") \
+            .option("driver", "org.postgresql.Driver") \
             .mode("append") \
             .save()
     except Exception as e:
