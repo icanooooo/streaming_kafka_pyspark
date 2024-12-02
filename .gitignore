@@ -1,3 +1,5 @@
 /venv
 /checkpoint
 /__pycache__
+
+postgresql-42.7.4.jar
