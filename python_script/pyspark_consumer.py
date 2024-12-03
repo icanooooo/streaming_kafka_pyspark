@@ -11,6 +11,7 @@ def ensureTable():
         id VARCHAR(50),
         name VARCHAR(50),
         age varchar(50),
+        job varchar(50),
         submitted_time TIMESTAMP 
     );
     """
@@ -65,6 +66,7 @@ if __name__ == "__main__":
         StructField("id", StringType(), True),
         StructField("name", StringType(), True),
         StructField("age", StringType(), True),
+        StructField("job", StringType(), True),
         StructField("submitted_time", TimestampType(), True)
     ])
 

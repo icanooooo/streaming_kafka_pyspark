@@ -15,6 +15,7 @@ def send_messages():
     data = {
         "id": input("Please insert id: "),
         "name": input("Please insert name: "),
+        "job": input("Please insert job: "),
         "age": input("Please insert age: "),
         "submitted_time": time.time()
     }
