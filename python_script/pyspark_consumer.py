@@ -1,7 +1,8 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType, StructType, StructField, TimestampType, IntegerType
-from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StringType, StructType, StructField, TimestampType, IntegerType, FloatType
+from pyspark.sql.functions import from_json, col, udf
 from helper.postgres_helper import create_connection, load_query
+# from forex_python.converter import CurrencyRates
 
 def ensureTable():
     conn = create_connection('localhost', 5432, 'destination_db', 'icanooo', 'rahasia')
@@ -12,7 +13,7 @@ def ensureTable():
         name VARCHAR(50),
         job varchar(50),
         age INT,
-        salary INT,
+        salary_in_usd FLOAT,
         submitted_time TIMESTAMP 
     );
     """
@@ -36,9 +37,11 @@ def to_postgres(batch_df, batch_id):
     except Exception as e:
         print(f"error: {e}")
 
-
 if __name__ == "__main__":
     ensureTable()
+
+    # c = CurrencyRates()
+    idr_to_usd = 0.000063 # don't forget to use forex_python
     
     # Create SparkSession
     spark = SparkSession.builder \
@@ -75,6 +78,9 @@ if __name__ == "__main__":
     parsed_stream = raw_stream.selectExpr("CAST(value AS STRING)") \
         .select(from_json(col("value"), schema).alias("data")) \
         .select("data.*")
+
+    parsed_stream = parsed_stream.withColumn("salary_in_usd", col('salary') * idr_to_usd) \
+                    .drop('salary')
 
     # Display data
     query = parsed_stream.writeStream \
