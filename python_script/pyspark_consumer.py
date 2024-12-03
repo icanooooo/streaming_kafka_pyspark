@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType, StructType, StructField, TimestampType
+from pyspark.sql.types import StringType, StructType, StructField, TimestampType, IntegerType
 from pyspark.sql.functions import from_json, col
 from helper.postgres_helper import create_connection, load_query
 
@@ -10,8 +10,9 @@ def ensureTable():
     CREATE TABLE IF NOT EXISTS test_table (
         id VARCHAR(50),
         name VARCHAR(50),
-        age varchar(50),
         job varchar(50),
+        age INT,
+        salary INT,
         submitted_time TIMESTAMP 
     );
     """
@@ -65,8 +66,9 @@ if __name__ == "__main__":
     schema = StructType([
         StructField("id", StringType(), True),
         StructField("name", StringType(), True),
-        StructField("age", StringType(), True),
         StructField("job", StringType(), True),
+        StructField("age", IntegerType(), True),
+        StructField("salary", IntegerType(), True),
         StructField("submitted_time", TimestampType(), True)
     ])
 
