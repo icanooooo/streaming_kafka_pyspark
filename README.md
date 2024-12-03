@@ -12,11 +12,34 @@ Within Kafka there are brokers, nodes that are responsible for doing the work. K
 
 ### Apache Spark (PySpark)
 
-Spark is a distributed system data processing tool. It aims to create a scalable data process by it's distributed system design and in-memory processing. 
+Spark is a distributed system data processing tool. It aims to create a scalable data process by it's distributed system design and in-memory processing. To use apache spark with python, we use its API, PySpark.
 
-updates:
-- Pyspark to Postgres success
+### To Do
 
-The full documentation will be written here when the project is done.
+By using Apache Kafka & Spark, we created a streaming pipeline that listens to an event and logs it to a consumer. This project is fairly simple, aiming to show how to use these services within docker. First all, in the directory where we pull this project, in the terminal input below to run all of the docker services in the docker-compose file
+
+```
+docker compose up
+```
+
+I've already build a service that automaticly run `kafka-topics` command to create kafka topic. With this, please go the the `python_script` directory and run the pyspark consumer python program.
+
+```
+python3 pyspark_consumer.py 
+```
+
+After that, if you want to input a log to the kafka broker, run the streaming simulation python file.
+
+```
+python3 streaming_simulation.py
+```
+
+### Summary
+
+In summary, this project is just a simple streaming pipeline which takes input, a processing layer with pyspark, and to store it in a database. I know this may seem pointless, as we can just take input an directly store it in a database. But I think this project could be maybe a template or example for further projects as it is quite simple an easy to understand, again this project is just for me to learn how to use kafka in conjuction with spark.
+
+After this I want to create project using kafka and pyspark with this as reference, I will update this as soon as the project comes up. 
+
+Shoutout to [CodeWithYu](https://www.youtube.com/@CodeWithYu) as his [project](https://github.com/airscholar/realtime-voting-data-engineering) was a direct inspiration and a learning resource for my project.
 
 Any comments are welcome. Thank you!
